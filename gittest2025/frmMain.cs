@@ -11,5 +11,10 @@ namespace gittest2025
         {
             MessageBox.Show("Hello, World!");
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }
