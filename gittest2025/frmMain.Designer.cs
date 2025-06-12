@@ -31,6 +31,7 @@
             components = new System.ComponentModel.Container();
             button1 = new Button();
             button2 = new Button();
+            button3 = new Button();
             btnAddTemperature = new Button();
             contextMenuStrip1 = new ContextMenuStrip(components);
             menuItemDelete = new ToolStripMenuItem();
@@ -97,6 +98,17 @@
             pictureBoxGraph.TabIndex = 3;
             pictureBoxGraph.TabStop = false;
             // 
+            // button3
+            // 
+            button3.Location = new Point(448, 82);
+            button3.Margin = new Padding(3, 2, 3, 2);
+            button3.Name = "button3";
+            button3.Size = new Size(109, 82);
+            button3.TabIndex = 2;
+            button3.Text = "最大化";
+            button3.UseVisualStyleBackColor = true;
+            button3.Click += button3_Click;
+            // 
             // frmMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -104,6 +116,7 @@
             ClientSize = new Size(700, 338);
             Controls.Add(pictureBoxGraph);
             Controls.Add(btnAddTemperature);
+            Controls.Add(button3);
             Controls.Add(button2);
             Controls.Add(button1);
             Margin = new Padding(3, 2, 3, 2);
@@ -122,5 +135,6 @@
         private ContextMenuStrip contextMenuStrip1;
         private ToolStripMenuItem menuItemDelete;
         private PictureBox pictureBoxGraph;
+        private Button button3;
     }
 }
