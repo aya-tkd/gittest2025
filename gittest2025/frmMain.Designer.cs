@@ -43,7 +43,7 @@
             // button1
             // 
             button1.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            button1.Location = new Point(447, 287);
+            button1.Location = new Point(456, 287);
             button1.Margin = new Padding(3, 2, 3, 2);
             button1.Name = "button1";
             button1.Size = new Size(109, 39);
@@ -63,6 +63,18 @@
             button2.Text = "閉じる";
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
+            // 
+            // button3
+            // 
+            button3.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            button3.Location = new Point(341, 287);
+            button3.Margin = new Padding(3, 2, 3, 2);
+            button3.Name = "button3";
+            button3.Size = new Size(109, 39);
+            button3.TabIndex = 2;
+            button3.Text = "最大化";
+            button3.UseVisualStyleBackColor = true;
+            button3.Click += button3_Click;
             // 
             // btnAddTemperature
             // 
@@ -97,17 +109,6 @@
             pictureBoxGraph.Size = new Size(660, 271);
             pictureBoxGraph.TabIndex = 3;
             pictureBoxGraph.TabStop = false;
-            // 
-            // button3
-            // 
-            button3.Location = new Point(448, 82);
-            button3.Margin = new Padding(3, 2, 3, 2);
-            button3.Name = "button3";
-            button3.Size = new Size(109, 82);
-            button3.TabIndex = 2;
-            button3.Text = "最大化";
-            button3.UseVisualStyleBackColor = true;
-            button3.Click += button3_Click;
             // 
             // frmMain
             // 
