@@ -36,6 +36,9 @@
             contextMenuStrip1 = new ContextMenuStrip(components);
             menuItemDelete = new ToolStripMenuItem();
             pictureBoxGraph = new PictureBox();
+            panelDetails = new Panel();
+            lblSelectedDateTime = new Label();
+            lblSelectedTemperature = new Label();
             contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBoxGraph).BeginInit();
             SuspendLayout();
@@ -106,15 +109,41 @@
             pictureBoxGraph.BorderStyle = BorderStyle.FixedSingle;
             pictureBoxGraph.Location = new Point(20, 10);
             pictureBoxGraph.Name = "pictureBoxGraph";
-            pictureBoxGraph.Size = new Size(660, 271);
+            pictureBoxGraph.Size = new Size(470, 271);
             pictureBoxGraph.TabIndex = 3;
             pictureBoxGraph.TabStop = false;
+            // 
+            // panelDetails
+            // 
+            panelDetails.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
+            panelDetails.BorderStyle = BorderStyle.FixedSingle;
+            panelDetails.Location = new Point(500, 10);
+            panelDetails.Name = "panelDetails";
+            panelDetails.Size = new Size(180, 271);
+            panelDetails.TabIndex = 5;
+            // 
+            // lblSelectedDateTime
+            // 
+            lblSelectedDateTime.AutoSize = true;
+            lblSelectedDateTime.Location = new Point(10, 10);
+            lblSelectedDateTime.Name = "lblSelectedDateTime";
+            lblSelectedDateTime.Size = new Size(160, 20);
+            lblSelectedDateTime.Text = "日時: ";
+            // 
+            // lblSelectedTemperature
+            // 
+            lblSelectedTemperature.AutoSize = true;
+            lblSelectedTemperature.Location = new Point(10, 40);
+            lblSelectedTemperature.Name = "lblSelectedTemperature";
+            lblSelectedTemperature.Size = new Size(160, 20);
+            lblSelectedTemperature.Text = "体温: ";
             // 
             // frmMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(700, 338);
+            Controls.Add(panelDetails);
             Controls.Add(pictureBoxGraph);
             Controls.Add(btnAddTemperature);
             Controls.Add(button3);
@@ -123,6 +152,8 @@
             Margin = new Padding(3, 2, 3, 2);
             Name = "frmMain";
             Text = "Form1";
+            panelDetails.Controls.Add(lblSelectedDateTime);
+            panelDetails.Controls.Add(lblSelectedTemperature);
             contextMenuStrip1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBoxGraph).EndInit();
             ResumeLayout(false);
@@ -137,5 +168,8 @@
         private ToolStripMenuItem menuItemDelete;
         private PictureBox pictureBoxGraph;
         private Button button3;
+        private Panel panelDetails;
+        private Label lblSelectedDateTime;
+        private Label lblSelectedTemperature;
     }
 }

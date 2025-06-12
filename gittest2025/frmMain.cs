@@ -103,11 +103,11 @@ namespace gittest2025
         }
 
         /// <summary>
-        /// グラフ上で右クリックされた点を選択し、削除メニューを表示
+        /// グラフ上でクリックされた点を選択し、情報を表示または削除メニューを表示
         /// </summary>
         private void PictureBoxGraph_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Right && temperatureDataManager.Records.Count > 0)
+            if (temperatureDataManager.Records.Count > 0)
             {
                 var records = temperatureDataManager.Records.OrderBy(r => r.RecordTime).ToList();
                 double minTemp = 35, maxTemp = 42;
@@ -136,10 +136,20 @@ namespace gittest2025
                         nearest = i;
                     }
                 }
-                if (nearest >= 0 && minDist < DataPointHitRadius * DataPointHitRadius) // 10px以内
+
+                if (nearest >= 0 && minDist < DataPointHitRadius * DataPointHitRadius)
                 {
                     selectedIndex = nearest;
-                    contextMenuStrip1.Show(pictureBoxGraph, e.Location);
+                    var record = records[nearest];
+                    
+                    // 選択されたデータの表示を更新
+                    lblSelectedDateTime.Text = $"日時: {record.RecordTime:yyyy/MM/dd HH:mm}";
+                    lblSelectedTemperature.Text = $"体温: {record.Temperature:F1}℃";
+
+                    if (e.Button == MouseButtons.Right)
+                    {
+                        contextMenuStrip1.Show(pictureBoxGraph, e.Location);
+                    }
                 }
             }
         }
