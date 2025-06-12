@@ -117,26 +117,45 @@
             // 
             panelDetails.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             panelDetails.BorderStyle = BorderStyle.FixedSingle;
+            panelDetails.BackColor = Color.FromArgb(240, 240, 255); // 薄い青色の背景
             panelDetails.Location = new Point(500, 10);
             panelDetails.Name = "panelDetails";
             panelDetails.Size = new Size(180, 271);
             panelDetails.TabIndex = 5;
-            // 
-            // lblSelectedDateTime
-            // 
-            lblSelectedDateTime.AutoSize = true;
-            lblSelectedDateTime.Location = new Point(10, 10);
-            lblSelectedDateTime.Name = "lblSelectedDateTime";
-            lblSelectedDateTime.Size = new Size(160, 20);
+            panelDetails.Padding = new Padding(10);
+
+            // タイトル用のラベルを追加
+            Label lblTitle = new Label();
+            lblTitle.AutoSize = false;
+            lblTitle.Dock = DockStyle.Top;
+            lblTitle.TextAlign = ContentAlignment.MiddleCenter;
+            lblTitle.Font = new Font("Yu Gothic UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            lblTitle.Text = "選択データ";
+            lblTitle.Height = 30;
+            lblTitle.BackColor = Color.FromArgb(200, 200, 255); // タイトル背景色
+
+            // 既存のラベルの設定を変更
+            lblSelectedDateTime.AutoSize = false;
+            lblSelectedDateTime.Dock = DockStyle.Top;
+            lblSelectedDateTime.TextAlign = ContentAlignment.MiddleLeft;
+            lblSelectedDateTime.Height = 25;
+            lblSelectedDateTime.Font = new Font("Yu Gothic UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point);
             lblSelectedDateTime.Text = "日時: ";
-            // 
-            // lblSelectedTemperature
-            // 
-            lblSelectedTemperature.AutoSize = true;
-            lblSelectedTemperature.Location = new Point(10, 40);
-            lblSelectedTemperature.Name = "lblSelectedTemperature";
-            lblSelectedTemperature.Size = new Size(160, 20);
+            lblSelectedDateTime.Padding = new Padding(5);
+
+            lblSelectedTemperature.AutoSize = false;
+            lblSelectedTemperature.Dock = DockStyle.Top;
+            lblSelectedTemperature.TextAlign = ContentAlignment.MiddleLeft;
+            lblSelectedTemperature.Height = 25;
+            lblSelectedTemperature.Font = new Font("Yu Gothic UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point);
             lblSelectedTemperature.Text = "体温: ";
+            lblSelectedTemperature.Padding = new Padding(5);
+
+            // コントロールの追加順序を変更
+            panelDetails.Controls.Clear();
+            panelDetails.Controls.Add(lblSelectedTemperature);  // 一番下に表示
+            panelDetails.Controls.Add(lblSelectedDateTime);     // 真ん中に表示
+            panelDetails.Controls.Add(lblTitle);               // 一番上に表示
             // 
             // frmMain
             // 
@@ -152,8 +171,6 @@
             Margin = new Padding(3, 2, 3, 2);
             Name = "frmMain";
             Text = "Form1";
-            panelDetails.Controls.Add(lblSelectedDateTime);
-            panelDetails.Controls.Add(lblSelectedTemperature);
             contextMenuStrip1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBoxGraph).EndInit();
             ResumeLayout(false);

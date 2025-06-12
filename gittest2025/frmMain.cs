@@ -15,6 +15,12 @@ namespace gittest2025
         // データ点のヒット判定距離（ピクセル）
         private const int DataPointHitRadius = 10;
 
+        // 温度範囲の定数
+        private const double MinTempScale = 30.0;  // Y軸の最小値
+        private const double MaxTempScale = 50.0;  // Y軸の最大値
+        private const double WarningTempHigh = 37.0;  // 警告ライン（高）
+        private const double WarningTempLow = 35.0;   // 警告ライン（低）
+
         public frmMain()
         {
             InitializeComponent();
@@ -66,20 +72,42 @@ namespace gittest2025
 
             graphics.Clear(Color.White);
 
+            // 軸の描画
             using (var axisPen = new Pen(Color.Black, 2))
             {
                 graphics.DrawLine(axisPen, 50, height - 40, width - 20, height - 40); // X軸
                 graphics.DrawLine(axisPen, 50, 20, 50, height - 40); // Y軸
             }
 
+            // タイトルとラベルの描画
             graphics.DrawString("体温推移", new Font("Meiryo", 14), Brushes.Black, width / 2 - 40, 5);
             graphics.DrawString("体温(℃)", new Font("Meiryo", 10), Brushes.Black, 5, 20);
             graphics.DrawString("入力時間", new Font("Meiryo", 10), Brushes.Black, width / 2 - 30, height - 25);
 
+            // 警告ラインの描画（グラフ領域内）
+            int graphTop = 20;
+            int graphBottom = height - 40;
+            int graphHeight = graphBottom - graphTop;
+
+            // 37度のライン（赤）
+            float y37 = (float)(graphBottom - ((WarningTempHigh - MinTempScale) / (MaxTempScale - MinTempScale) * graphHeight));
+            using (var warningPenHigh = new Pen(Color.Red, 1) { DashStyle = System.Drawing.Drawing2D.DashStyle.Dash })
+            {
+                graphics.DrawLine(warningPenHigh, 50, y37, width - 20, y37);
+                graphics.DrawString("37.0℃", new Font("Meiryo", 8), Brushes.Red, 15, y37 - 7);
+            }
+
+            // 35度のライン（青）
+            float y35 = (float)(graphBottom - ((WarningTempLow - MinTempScale) / (MaxTempScale - MinTempScale) * graphHeight));
+            using (var warningPenLow = new Pen(Color.Blue, 1) { DashStyle = System.Drawing.Drawing2D.DashStyle.Dash })
+            {
+                graphics.DrawLine(warningPenLow, 50, y35, width - 20, y35);
+                graphics.DrawString("35.0℃", new Font("Meiryo", 8), Brushes.Blue, 15, y35 - 7);
+            }
+
             if (temperatureDataManager.Records.Count > 0)
             {
                 var records = temperatureDataManager.Records.OrderBy(r => r.RecordTime).ToList();
-                double minTemp = 35, maxTemp = 42;
                 DateTime minTime = records.First().RecordTime;
                 DateTime maxTime = records.Last().RecordTime;
                 double timeSpan = (maxTime - minTime).TotalMinutes;
@@ -88,7 +116,7 @@ namespace gittest2025
                 PointF[] dataPoints = records.Select(r =>
                 {
                     float x = 50 + (float)((r.RecordTime - minTime).TotalMinutes / timeSpan * (width - 80));
-                    float y = (float)(height - 40 - ((double)r.Temperature - minTemp) / (maxTemp - minTemp) * (height - 60));
+                    float y = (float)(height - 40 - ((double)r.Temperature - MinTempScale) / (MaxTempScale - MinTempScale) * (height - 60));
                     return new PointF(x, y);
                 }).ToArray();
 
@@ -110,7 +138,6 @@ namespace gittest2025
             if (temperatureDataManager.Records.Count > 0)
             {
                 var records = temperatureDataManager.Records.OrderBy(r => r.RecordTime).ToList();
-                double minTemp = 35, maxTemp = 42;
                 DateTime minTime = records.First().RecordTime;
                 DateTime maxTime = records.Last().RecordTime;
                 double timeSpan = (maxTime - minTime).TotalMinutes;
@@ -119,7 +146,7 @@ namespace gittest2025
                 PointF[] dataPoints = records.Select(r =>
                 {
                     float x = 50 + (float)((r.RecordTime - minTime).TotalMinutes / timeSpan * (pictureBoxGraph.Width - 80));
-                    float y = (float)(pictureBoxGraph.Height - 40 - ((double)r.Temperature - minTemp) / (maxTemp - minTemp) * (pictureBoxGraph.Height - 60));
+                    float y = (float)(pictureBoxGraph.Height - 40 - ((double)r.Temperature - MinTempScale) / (MaxTempScale - MinTempScale) * (pictureBoxGraph.Height - 60));
                     return new PointF(x, y);
                 }).ToArray();
 
@@ -144,6 +171,21 @@ namespace gittest2025
                     
                     // 選択されたデータの表示を更新
                     lblSelectedDateTime.Text = $"日時: {record.RecordTime:yyyy/MM/dd HH:mm}";
+
+                    // 体温値によって文字色を変更
+                    if ((double)record.Temperature <= WarningTempLow)
+                    {
+                        lblSelectedTemperature.ForeColor = Color.Blue;
+                    }
+                    else if ((double)record.Temperature >= WarningTempHigh)
+                    {
+                        lblSelectedTemperature.ForeColor = Color.Red;
+                    }
+                    else
+                    {
+                        lblSelectedTemperature.ForeColor = Color.Black;
+                    }
+
                     lblSelectedTemperature.Text = $"体温: {record.Temperature:F1}℃";
 
                     if (e.Button == MouseButtons.Right)
@@ -166,7 +208,6 @@ namespace gittest2025
             }
 
             var records = temperatureDataManager.Records.OrderBy(r => r.RecordTime).ToList();
-            double minTemp = 35, maxTemp = 42;
             DateTime minTime = records.First().RecordTime;
             DateTime maxTime = records.Last().RecordTime;
             double timeSpan = (maxTime - minTime).TotalMinutes;
@@ -175,7 +216,7 @@ namespace gittest2025
             PointF[] dataPoints = records.Select(r =>
             {
                 float x = 50 + (float)((r.RecordTime - minTime).TotalMinutes / timeSpan * (pictureBoxGraph.Width - 80));
-                float y = (float)(pictureBoxGraph.Height - 40 - ((double)r.Temperature - minTemp) / (maxTemp - minTemp) * (pictureBoxGraph.Height - 60));
+                float y = (float)(pictureBoxGraph.Height - 40 - ((double)r.Temperature - MinTempScale) / (MaxTempScale - MinTempScale) * (pictureBoxGraph.Height - 60));
                 return new PointF(x, y);
             }).ToArray();
 
