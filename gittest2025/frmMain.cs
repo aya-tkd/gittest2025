@@ -203,9 +203,20 @@ namespace gittest2025
             if (selectedIndex.HasValue && selectedIndex.Value >= 0 && selectedIndex.Value < temperatureDataManager.Records.Count)
             {
                 var record = temperatureDataManager.Records[selectedIndex.Value];
-                temperatureDataManager.RemoveRecord(record);
-                selectedIndex = null;
-                UpdateTemperatureGraph();
+
+                // 削除確認ダイアログを表示
+                var result = MessageBox.Show(
+                    $"選択した体温データ（{record.RecordTime:yyyy/MM/dd HH:mm}、{record.Temperature:F1}℃）を削除しますか？",
+                    "削除の確認",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+                if (result == DialogResult.Yes)
+                {
+                    temperatureDataManager.RemoveRecord(record);
+                    selectedIndex = null;
+                    UpdateTemperatureGraph();
+                }
             }
         }
 
