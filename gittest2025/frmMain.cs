@@ -10,6 +10,10 @@ namespace gittest2025
     {
         private readonly TemperatureDataManager temperatureDataManager = new TemperatureDataManager();
         private int? selectedIndex = null;
+        private readonly ToolTip graphToolTip = new ToolTip();
+
+        // データ点のヒット判定距離（ピクセル）
+        private const int DataPointHitRadius = 10;
 
         public frmMain()
         {
@@ -25,6 +29,7 @@ namespace gittest2025
             // デザイナで追加したpictureBoxGraphを利用
             pictureBoxGraph.Paint += PictureBoxGraph_Paint;
             pictureBoxGraph.MouseDown += PictureBoxGraph_MouseDown;
+            pictureBoxGraph.MouseMove += PictureBoxGraph_MouseMove;
             UpdateTemperatureGraph();
         }
 
@@ -55,23 +60,22 @@ namespace gittest2025
         /// </summary>
         private void PictureBoxGraph_Paint(object sender, PaintEventArgs e)
         {
-            var g = e.Graphics;
+            var graphics = e.Graphics;
             int width = pictureBoxGraph.Width;
             int height = pictureBoxGraph.Height;
 
-            g.Clear(Color.White);
+            graphics.Clear(Color.White);
 
-            // 軸の描画
-            Pen axisPen = new Pen(Color.Black, 2);
-            g.DrawLine(axisPen, 50, height - 40, width - 20, height - 40); // X軸
-            g.DrawLine(axisPen, 50, 20, 50, height - 40); // Y軸
+            using (var axisPen = new Pen(Color.Black, 2))
+            {
+                graphics.DrawLine(axisPen, 50, height - 40, width - 20, height - 40); // X軸
+                graphics.DrawLine(axisPen, 50, 20, 50, height - 40); // Y軸
+            }
 
-            // ラベル
-            g.DrawString("体温推移", new Font("Meiryo", 14), Brushes.Black, width / 2 - 40, 5);
-            g.DrawString("体温(℃)", new Font("Meiryo", 10), Brushes.Black, 5, 20);
-            g.DrawString("入力時間", new Font("Meiryo", 10), Brushes.Black, width / 2 - 30, height - 25);
+            graphics.DrawString("体温推移", new Font("Meiryo", 14), Brushes.Black, width / 2 - 40, 5);
+            graphics.DrawString("体温(℃)", new Font("Meiryo", 10), Brushes.Black, 5, 20);
+            graphics.DrawString("入力時間", new Font("Meiryo", 10), Brushes.Black, width / 2 - 30, height - 25);
 
-            // データ点の描画
             if (temperatureDataManager.Records.Count > 0)
             {
                 var records = temperatureDataManager.Records.OrderBy(r => r.RecordTime).ToList();
@@ -81,7 +85,7 @@ namespace gittest2025
                 double timeSpan = (maxTime - minTime).TotalMinutes;
                 if (timeSpan == 0) timeSpan = 1; // 1点のみの場合
 
-                PointF[] points = records.Select(r =>
+                PointF[] dataPoints = records.Select(r =>
                 {
                     float x = 50 + (float)((r.RecordTime - minTime).TotalMinutes / timeSpan * (width - 80));
                     float y = (float)(height - 40 - ((double)r.Temperature - minTemp) / (maxTemp - minTemp) * (height - 60));
@@ -89,12 +93,12 @@ namespace gittest2025
                 }).ToArray();
 
                 // 折れ線
-                if (points.Length > 1)
-                    g.DrawLines(Pens.Blue, points);
+                if (dataPoints.Length > 1)
+                    graphics.DrawLines(Pens.Blue, dataPoints);
 
                 // 点
-                foreach (var pt in points)
-                    g.FillEllipse(Brushes.Red, pt.X - 4, pt.Y - 4, 8, 8);
+                foreach (var pt in dataPoints)
+                    graphics.FillEllipse(Brushes.Red, pt.X - 4, pt.Y - 4, 8, 8);
             }
         }
 
@@ -112,7 +116,7 @@ namespace gittest2025
                 double timeSpan = (maxTime - minTime).TotalMinutes;
                 if (timeSpan == 0) timeSpan = 1;
 
-                PointF[] points = records.Select(r =>
+                PointF[] dataPoints = records.Select(r =>
                 {
                     float x = 50 + (float)((r.RecordTime - minTime).TotalMinutes / timeSpan * (pictureBoxGraph.Width - 80));
                     float y = (float)(pictureBoxGraph.Height - 40 - ((double)r.Temperature - minTemp) / (maxTemp - minTemp) * (pictureBoxGraph.Height - 60));
@@ -121,10 +125,10 @@ namespace gittest2025
 
                 int nearest = -1;
                 double minDist = double.MaxValue;
-                for (int i = 0; i < points.Length; i++)
+                for (int i = 0; i < dataPoints.Length; i++)
                 {
-                    double dx = points[i].X - e.X;
-                    double dy = points[i].Y - e.Y;
+                    double dx = dataPoints[i].X - e.X;
+                    double dy = dataPoints[i].Y - e.Y;
                     double dist = dx * dx + dy * dy;
                     if (dist < minDist)
                     {
@@ -132,11 +136,65 @@ namespace gittest2025
                         nearest = i;
                     }
                 }
-                if (nearest >= 0 && minDist < 100) // 10px以内
+                if (nearest >= 0 && minDist < DataPointHitRadius * DataPointHitRadius) // 10px以内
                 {
                     selectedIndex = nearest;
                     contextMenuStrip1.Show(pictureBoxGraph, e.Location);
                 }
+            }
+        }
+
+        /// <summary>
+        /// マウス移動時にデータ点上ならツールチップ表示
+        /// </summary>
+        private void PictureBoxGraph_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (temperatureDataManager.Records.Count == 0)
+            {
+                graphToolTip.Hide(pictureBoxGraph);
+                return;
+            }
+
+            var records = temperatureDataManager.Records.OrderBy(r => r.RecordTime).ToList();
+            double minTemp = 35, maxTemp = 42;
+            DateTime minTime = records.First().RecordTime;
+            DateTime maxTime = records.Last().RecordTime;
+            double timeSpan = (maxTime - minTime).TotalMinutes;
+            if (timeSpan == 0) timeSpan = 1;
+
+            PointF[] dataPoints = records.Select(r =>
+            {
+                float x = 50 + (float)((r.RecordTime - minTime).TotalMinutes / timeSpan * (pictureBoxGraph.Width - 80));
+                float y = (float)(pictureBoxGraph.Height - 40 - ((double)r.Temperature - minTemp) / (maxTemp - minTemp) * (pictureBoxGraph.Height - 60));
+                return new PointF(x, y);
+            }).ToArray();
+
+            int nearestIndex = -1;
+            double minDist = double.MaxValue;
+            for (int i = 0; i < dataPoints.Length; i++)
+            {
+                double dx = dataPoints[i].X - e.X;
+                double dy = dataPoints[i].Y - e.Y;
+                double dist = dx * dx + dy * dy;
+                if (dist < minDist)
+                {
+                    minDist = dist;
+                    nearestIndex = i;
+                }
+            }
+
+            if (nearestIndex >= 0 && minDist < DataPointHitRadius * DataPointHitRadius)
+            {
+                var record = records[nearestIndex];
+                string toolTipText = $"入力時間: {record.RecordTime:yyyy/MM/dd HH:mm}\n体温: {record.Temperature:F1} ℃";
+                if (graphToolTip.GetToolTip(pictureBoxGraph) != toolTipText)
+                {
+                    graphToolTip.Show(toolTipText, pictureBoxGraph, e.Location.X + 10, e.Location.Y + 10, 2000);
+                }
+            }
+            else
+            {
+                graphToolTip.Hide(pictureBoxGraph);
             }
         }
 
