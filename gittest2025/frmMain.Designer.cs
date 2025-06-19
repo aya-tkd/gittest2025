@@ -29,62 +29,38 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            button1 = new Button();
             button2 = new Button();
-            button3 = new Button();
             btnAddTemperature = new Button();
             contextMenuStrip1 = new ContextMenuStrip(components);
             menuItemDelete = new ToolStripMenuItem();
             pictureBoxGraph = new PictureBox();
             panelDetails = new Panel();
-            lblSelectedDateTime = new Label();
             lblSelectedTemperature = new Label();
+            lblSelectedDateTime = new Label();
+            lblTitle = new Label();
             contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBoxGraph).BeginInit();
+            panelDetails.SuspendLayout();
             SuspendLayout();
-            // 
-            // button1
-            // 
-            button1.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            button1.Location = new Point(456, 287);
-            button1.Margin = new Padding(3, 2, 3, 2);
-            button1.Name = "button1";
-            button1.Size = new Size(109, 39);
-            button1.TabIndex = 0;
-            button1.Text = "確認";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
             // 
             // button2
             // 
             button2.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            button2.Location = new Point(571, 287);
+            button2.Location = new Point(590, 296);
             button2.Margin = new Padding(3, 2, 3, 2);
             button2.Name = "button2";
-            button2.Size = new Size(109, 39);
+            button2.Size = new Size(90, 30);
             button2.TabIndex = 1;
             button2.Text = "閉じる";
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
             // 
-            // button3
-            // 
-            button3.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            button3.Location = new Point(341, 287);
-            button3.Margin = new Padding(3, 2, 3, 2);
-            button3.Name = "button3";
-            button3.Size = new Size(109, 39);
-            button3.TabIndex = 2;
-            button3.Text = "最大化";
-            button3.UseVisualStyleBackColor = true;
-            button3.Click += button3_Click;
-            // 
             // btnAddTemperature
             // 
             btnAddTemperature.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            btnAddTemperature.Location = new Point(20, 287);
+            btnAddTemperature.Location = new Point(20, 296);
             btnAddTemperature.Name = "btnAddTemperature";
-            btnAddTemperature.Size = new Size(109, 39);
+            btnAddTemperature.Size = new Size(90, 30);
             btnAddTemperature.TabIndex = 4;
             btnAddTemperature.Text = "体温入力";
             btnAddTemperature.UseVisualStyleBackColor = true;
@@ -116,46 +92,52 @@
             // panelDetails
             // 
             panelDetails.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
+            panelDetails.BackColor = Color.FromArgb(240, 240, 255);
             panelDetails.BorderStyle = BorderStyle.FixedSingle;
-            panelDetails.BackColor = Color.FromArgb(240, 240, 255); // 薄い青色の背景
+            panelDetails.Controls.Add(lblSelectedTemperature);
+            panelDetails.Controls.Add(lblSelectedDateTime);
+            panelDetails.Controls.Add(lblTitle);
             panelDetails.Location = new Point(500, 10);
             panelDetails.Name = "panelDetails";
+            panelDetails.Padding = new Padding(10);
             panelDetails.Size = new Size(180, 271);
             panelDetails.TabIndex = 5;
-            panelDetails.Padding = new Padding(10);
-
-            // タイトル用のラベルを追加
-            Label lblTitle = new Label();
-            lblTitle.AutoSize = false;
-            lblTitle.Dock = DockStyle.Top;
-            lblTitle.TextAlign = ContentAlignment.MiddleCenter;
-            lblTitle.Font = new Font("Yu Gothic UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            lblTitle.Text = "選択データ";
-            lblTitle.Height = 30;
-            lblTitle.BackColor = Color.FromArgb(200, 200, 255); // タイトル背景色
-
-            // 既存のラベルの設定を変更
-            lblSelectedDateTime.AutoSize = false;
-            lblSelectedDateTime.Dock = DockStyle.Top;
-            lblSelectedDateTime.TextAlign = ContentAlignment.MiddleLeft;
-            lblSelectedDateTime.Height = 25;
-            lblSelectedDateTime.Font = new Font("Yu Gothic UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point);
-            lblSelectedDateTime.Text = "日時: ";
-            lblSelectedDateTime.Padding = new Padding(5);
-
-            lblSelectedTemperature.AutoSize = false;
+            // 
+            // lblSelectedTemperature
+            // 
             lblSelectedTemperature.Dock = DockStyle.Top;
-            lblSelectedTemperature.TextAlign = ContentAlignment.MiddleLeft;
-            lblSelectedTemperature.Height = 25;
-            lblSelectedTemperature.Font = new Font("Yu Gothic UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point);
-            lblSelectedTemperature.Text = "体温: ";
+            lblSelectedTemperature.Font = new Font("Yu Gothic UI", 9.75F);
+            lblSelectedTemperature.Location = new Point(10, 65);
+            lblSelectedTemperature.Name = "lblSelectedTemperature";
             lblSelectedTemperature.Padding = new Padding(5);
-
-            // コントロールの追加順序を変更
-            panelDetails.Controls.Clear();
-            panelDetails.Controls.Add(lblSelectedTemperature);  // 一番下に表示
-            panelDetails.Controls.Add(lblSelectedDateTime);     // 真ん中に表示
-            panelDetails.Controls.Add(lblTitle);               // 一番上に表示
+            lblSelectedTemperature.Size = new Size(158, 25);
+            lblSelectedTemperature.TabIndex = 0;
+            lblSelectedTemperature.Text = "体温: ";
+            lblSelectedTemperature.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // lblSelectedDateTime
+            // 
+            lblSelectedDateTime.Dock = DockStyle.Top;
+            lblSelectedDateTime.Font = new Font("Yu Gothic UI", 9.75F);
+            lblSelectedDateTime.Location = new Point(10, 40);
+            lblSelectedDateTime.Name = "lblSelectedDateTime";
+            lblSelectedDateTime.Padding = new Padding(5);
+            lblSelectedDateTime.Size = new Size(158, 25);
+            lblSelectedDateTime.TabIndex = 1;
+            lblSelectedDateTime.Text = "日時: ";
+            lblSelectedDateTime.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // lblTitle
+            // 
+            lblTitle.BackColor = Color.FromArgb(200, 200, 255);
+            lblTitle.Dock = DockStyle.Top;
+            lblTitle.Font = new Font("Yu Gothic UI", 12F, FontStyle.Bold);
+            lblTitle.Location = new Point(10, 10);
+            lblTitle.Name = "lblTitle";
+            lblTitle.Size = new Size(158, 30);
+            lblTitle.TabIndex = 2;
+            lblTitle.Text = "選択データ";
+            lblTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // frmMain
             // 
@@ -165,28 +147,25 @@
             Controls.Add(panelDetails);
             Controls.Add(pictureBoxGraph);
             Controls.Add(btnAddTemperature);
-            Controls.Add(button3);
             Controls.Add(button2);
-            Controls.Add(button1);
             Margin = new Padding(3, 2, 3, 2);
             Name = "frmMain";
             Text = "Form1";
             contextMenuStrip1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBoxGraph).EndInit();
+            panelDetails.ResumeLayout(false);
             ResumeLayout(false);
         }
 
         #endregion
-
-        private Button button1;
         private Button button2;
         private Button btnAddTemperature;
         private ContextMenuStrip contextMenuStrip1;
         private ToolStripMenuItem menuItemDelete;
         private PictureBox pictureBoxGraph;
-        private Button button3;
         private Panel panelDetails;
         private Label lblSelectedDateTime;
         private Label lblSelectedTemperature;
+        private Label lblTitle;
     }
 }

@@ -12,6 +12,9 @@ namespace gittest2025
         private int? selectedIndex = null;
         private readonly ToolTip graphToolTip = new ToolTip();
 
+        private Button btnCsvExport;
+        private Button btnCsvImport;
+
         // データ点のヒット判定距離（ピクセル）
         private const int DataPointHitRadius = 10;
 
@@ -25,6 +28,7 @@ namespace gittest2025
         {
             InitializeComponent();
             InitializeTemperatureGraph();
+            InitializeCsvButtons(); // 追加
         }
 
         /// <summary>
@@ -37,6 +41,114 @@ namespace gittest2025
             pictureBoxGraph.MouseDown += PictureBoxGraph_MouseDown;
             pictureBoxGraph.MouseMove += PictureBoxGraph_MouseMove;
             UpdateTemperatureGraph();
+        }
+
+        /// <summary>
+        /// CSVボタンの初期設定
+        /// </summary>
+        private void InitializeCsvButtons()
+        {
+            // CSV出力ボタン
+            btnCsvExport = new Button
+            {
+                Text = "CSV出力",
+                Location = new Point(490, 296),
+                Size = new Size(90, 30),
+                Anchor = AnchorStyles.Bottom | AnchorStyles.Right
+            };
+            btnCsvExport.Click += btnCsvExport_Click;
+            this.Controls.Add(btnCsvExport);
+
+            // CSV読込ボタン
+            btnCsvImport = new Button
+            {
+                Text = "CSV読込",
+                Location = new Point(390, 296),
+                Size = new Size(90, 30),
+                Anchor = AnchorStyles.Bottom | AnchorStyles.Right
+            };
+            btnCsvImport.Click += btnCsvImport_Click;
+            this.Controls.Add(btnCsvImport);
+        }
+
+        /// <summary>
+        /// CSV出力ボタンのクリックイベント
+        /// </summary>
+        private void btnCsvExport_Click(object sender, EventArgs e)
+        {
+            using (var saveFileDialog = new SaveFileDialog())
+            {
+                saveFileDialog.Filter = "CSVファイル|*.csv";
+                saveFileDialog.Title = "CSV出力";
+                saveFileDialog.FileName = "temperature_data.csv";
+
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        temperatureDataManager.SaveRecordsToCsv(saveFileDialog.FileName);
+                        ShowNotification("CSVファイルの出力に成功しました。");
+                    }
+                    catch (Exception ex)
+                    {
+                        ShowNotification($"CSVファイルの出力に失敗しました。\n{ex.Message}", true);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// CSV読込ボタンのクリックイベント
+        /// </summary>
+        private void btnCsvImport_Click(object sender, EventArgs e)
+        {
+            using (var openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Filter = "CSVファイル|*.csv";
+                openFileDialog.Title = "CSV読込";
+                openFileDialog.FileName = "temperature_data.csv";
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        temperatureDataManager.LoadRecordsFromCsv(openFileDialog.FileName);
+                        UpdateTemperatureGraph();
+                        ShowNotification("CSVファイルの読み込みに成功しました。");
+                    }
+                    catch (Exception ex)
+                    {
+                        ShowNotification($"CSVファイルの読み込みに失敗しました。\n{ex.Message}", true);
+                    }
+                }
+            }
+        }
+
+        // 修正箇所: Timerの曖昧さを解消し、オブジェクト初期化を簡素化
+        private void ShowNotification(string message, bool isError = false)
+        {
+            var notifyIcon = new NotifyIcon
+            {
+                Visible = true,
+                Icon = SystemIcons.Information,
+                BalloonTipTitle = isError ? "エラー" : "情報",
+                BalloonTipText = message,
+                BalloonTipIcon = isError ? ToolTipIcon.Error : ToolTipIcon.Info
+            };
+
+            notifyIcon.ShowBalloonTip(3000);
+
+            // Timerの曖昧さを解消し、オブジェクト初期化を簡素化
+            var timer = new System.Windows.Forms.Timer
+            {
+                Interval = 3000
+            };
+            timer.Tick += (s, e) =>
+            {
+                notifyIcon.Dispose();
+                timer.Dispose();
+            };
+            timer.Start();
         }
 
         /// <summary>
