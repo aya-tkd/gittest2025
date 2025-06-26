@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Drawing.Imaging;
 using gittest2025.Models;
 
 namespace gittest2025
@@ -14,6 +15,7 @@ namespace gittest2025
 
         private Button btnCsvExport;
         private Button btnCsvImport;
+        private Button btnGraphExport;
 
         private const int DataPointHitRadius = 10;
 
@@ -27,6 +29,7 @@ namespace gittest2025
             InitializeComponent();
             InitializeTemperatureGraph();
             InitializeCsvButtons();
+            InitializeGraphExportButton();
         }
 
         private void InitializeTemperatureGraph()
@@ -58,6 +61,56 @@ namespace gittest2025
             };
             btnCsvImport.Click += btnCsvImport_Click;
             this.Controls.Add(btnCsvImport);
+        }
+
+        private void InitializeGraphExportButton()
+        {
+            btnGraphExport = new Button
+            {
+                Text = "グラフ出力",
+                Location = new Point(290, 296),
+                Size = new Size(90, 30),
+                Anchor = AnchorStyles.Bottom | AnchorStyles.Right
+            };
+            btnGraphExport.Click += btnGraphExport_Click;
+            this.Controls.Add(btnGraphExport);
+        }
+
+        private void btnGraphExport_Click(object sender, EventArgs e)
+        {
+            using (var saveFileDialog = new SaveFileDialog())
+            {
+                saveFileDialog.Filter = "PNG画像|*.png|JPEG画像|*.jpg|BMP画像|*.bmp";
+                saveFileDialog.Title = "グラフを画像として保存";
+                saveFileDialog.FileName = "temperature_graph.png";
+
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        using (var bmp = new Bitmap(pictureBoxGraph.Width, pictureBoxGraph.Height))
+                        {
+                            pictureBoxGraph.DrawToBitmap(bmp, new Rectangle(0, 0, pictureBoxGraph.Width, pictureBoxGraph.Height));
+                            
+                            ImageFormat format = ImageFormat.Png;
+                            if (saveFileDialog.FilterIndex == 2)
+                            {
+                                format = ImageFormat.Jpeg;
+                            }
+                            else if (saveFileDialog.FilterIndex == 3)
+                            {
+                                format = ImageFormat.Bmp;
+                            }
+                            bmp.Save(saveFileDialog.FileName, format);
+                        }
+                        ShowNotification("グラフ画像を保存しました。");
+                    }
+                    catch (Exception ex)
+                    {
+                        ShowNotification($"グラフ画像の保存に失敗しました.\n{ex.Message}", true);
+                    }
+                }
+            }
         }
 
         private void btnCsvExport_Click(object sender, EventArgs e)
