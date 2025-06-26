@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
-using System.Drawing; // ’Ç‰Á
+using System.Drawing;
 using gittest2025.Models;
 
 namespace gittest2025
@@ -15,43 +15,33 @@ namespace gittest2025
         private Button btnCsvExport;
         private Button btnCsvImport;
 
-        // ƒf[ƒ^“_‚Ìƒqƒbƒg”»’è‹——£iƒsƒNƒZƒ‹j
         private const int DataPointHitRadius = 10;
 
-        // ‰·“x”ÍˆÍ‚Ì’è”
-        private const double MinTempScale = 30.0;  // Y²‚ÌÅ¬’l
-        private const double MaxTempScale = 50.0;  // Y²‚ÌÅ‘å’l
-        private const double WarningTempHigh = 37.0;  // Œxƒ‰ƒCƒ“i‚j
-        private const double WarningTempLow = 35.0;   // Œxƒ‰ƒCƒ“i’áj
+        private const double MinTempScale = 30.0;
+        private const double MaxTempScale = 50.0;
+        private const double WarningTempHigh = 37.0;
+        private const double WarningTempLow = 35.0;
 
         public frmMain()
         {
             InitializeComponent();
             InitializeTemperatureGraph();
-            InitializeCsvButtons(); // ’Ç‰Á
+            InitializeCsvButtons();
         }
 
-        /// <summary>
-        /// ƒOƒ‰ƒt‚Ì‰Šúİ’è
-        /// </summary>
         private void InitializeTemperatureGraph()
         {
-            // ƒfƒUƒCƒi‚Å’Ç‰Á‚µ‚½pictureBoxGraph‚ğ—˜—p
             pictureBoxGraph.Paint += PictureBoxGraph_Paint;
             pictureBoxGraph.MouseDown += PictureBoxGraph_MouseDown;
             pictureBoxGraph.MouseMove += PictureBoxGraph_MouseMove;
             UpdateTemperatureGraph();
         }
 
-        /// <summary>
-        /// CSVƒ{ƒ^ƒ“‚Ì‰Šúİ’è
-        /// </summary>
         private void InitializeCsvButtons()
         {
-            // CSVo—Íƒ{ƒ^ƒ“
             btnCsvExport = new Button
             {
-                Text = "CSVo—Í",
+                Text = "CSVå‡ºåŠ›",
                 Location = new Point(490, 296),
                 Size = new Size(90, 30),
                 Anchor = AnchorStyles.Bottom | AnchorStyles.Right
@@ -59,10 +49,9 @@ namespace gittest2025
             btnCsvExport.Click += btnCsvExport_Click;
             this.Controls.Add(btnCsvExport);
 
-            // CSV“Çƒ{ƒ^ƒ“
             btnCsvImport = new Button
             {
-                Text = "CSV“Ç",
+                Text = "CSVå–è¾¼",
                 Location = new Point(390, 296),
                 Size = new Size(90, 30),
                 Anchor = AnchorStyles.Bottom | AnchorStyles.Right
@@ -71,15 +60,12 @@ namespace gittest2025
             this.Controls.Add(btnCsvImport);
         }
 
-        /// <summary>
-        /// CSVo—Íƒ{ƒ^ƒ“‚ÌƒNƒŠƒbƒNƒCƒxƒ“ƒg
-        /// </summary>
         private void btnCsvExport_Click(object sender, EventArgs e)
         {
             using (var saveFileDialog = new SaveFileDialog())
             {
-                saveFileDialog.Filter = "CSVƒtƒ@ƒCƒ‹|*.csv";
-                saveFileDialog.Title = "CSVo—Í";
+                saveFileDialog.Filter = "CSVãƒ•ã‚¡ã‚¤ãƒ«|*.csv";
+                saveFileDialog.Title = "CSVå‡ºåŠ›";
                 saveFileDialog.FileName = "temperature_data.csv";
 
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
@@ -87,25 +73,22 @@ namespace gittest2025
                     try
                     {
                         temperatureDataManager.SaveRecordsToCsv(saveFileDialog.FileName);
-                        ShowNotification("CSVƒtƒ@ƒCƒ‹‚Ìo—Í‚É¬Œ÷‚µ‚Ü‚µ‚½B");
+                        ShowNotification("CSVãƒ•ã‚¡ã‚¤ãƒ«ã®å‡ºåŠ›ã«æˆåŠŸã—ã¾ã—ãŸã€‚");
                     }
                     catch (Exception ex)
                     {
-                        ShowNotification($"CSVƒtƒ@ƒCƒ‹‚Ìo—Í‚É¸”s‚µ‚Ü‚µ‚½B\n{ex.Message}", true);
+                        ShowNotification($"CSVãƒ•ã‚¡ã‚¤ãƒ«ã®å‡ºåŠ›ã«å¤±æ•—ã—ã¾ã—ãŸ.\n{ex.Message}", true);
                     }
                 }
             }
         }
 
-        /// <summary>
-        /// CSV“Çƒ{ƒ^ƒ“‚ÌƒNƒŠƒbƒNƒCƒxƒ“ƒg
-        /// </summary>
         private void btnCsvImport_Click(object sender, EventArgs e)
         {
             using (var openFileDialog = new OpenFileDialog())
             {
-                openFileDialog.Filter = "CSVƒtƒ@ƒCƒ‹|*.csv";
-                openFileDialog.Title = "CSV“Ç";
+                openFileDialog.Filter = "CSVãƒ•ã‚¡ã‚¤ãƒ«|*.csv";
+                openFileDialog.Title = "CSVå–è¾¼";
                 openFileDialog.FileName = "temperature_data.csv";
 
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
@@ -114,31 +97,29 @@ namespace gittest2025
                     {
                         temperatureDataManager.LoadRecordsFromCsv(openFileDialog.FileName);
                         UpdateTemperatureGraph();
-                        ShowNotification("CSVƒtƒ@ƒCƒ‹‚Ì“Ç‚İ‚İ‚É¬Œ÷‚µ‚Ü‚µ‚½B");
+                        ShowNotification("CSVãƒ•ã‚¡ã‚¤ãƒ«ã®èª­ã¿è¾¼ã¿ã«æˆåŠŸã—ã¾ã—ãŸã€‚");
                     }
                     catch (Exception ex)
                     {
-                        ShowNotification($"CSVƒtƒ@ƒCƒ‹‚Ì“Ç‚İ‚İ‚É¸”s‚µ‚Ü‚µ‚½B\n{ex.Message}", true);
+                        ShowNotification($"CSVãƒ•ã‚¡ã‚¤ãƒ«ã®èª­ã¿è¾¼ã¿ã«å¤±æ•—ã—ã¾ã—ãŸ.\n{ex.Message}", true);
                     }
                 }
             }
         }
 
-        // C³‰ÓŠ: Timer‚ÌB–†‚³‚ğ‰ğÁ‚µAƒIƒuƒWƒFƒNƒg‰Šú‰»‚ğŠÈ‘f‰»
         private void ShowNotification(string message, bool isError = false)
         {
             var notifyIcon = new NotifyIcon
             {
                 Visible = true,
                 Icon = SystemIcons.Information,
-                BalloonTipTitle = isError ? "ƒGƒ‰[" : "î•ñ",
+                BalloonTipTitle = isError ? "ã‚¨ãƒ©ãƒ¼" : "é€šçŸ¥",
                 BalloonTipText = message,
                 BalloonTipIcon = isError ? ToolTipIcon.Error : ToolTipIcon.Info
             };
 
             notifyIcon.ShowBalloonTip(3000);
 
-            // Timer‚ÌB–†‚³‚ğ‰ğÁ‚µAƒIƒuƒWƒFƒNƒg‰Šú‰»‚ğŠÈ‘f‰»
             var timer = new System.Windows.Forms.Timer
             {
                 Interval = 3000
@@ -151,9 +132,6 @@ namespace gittest2025
             timer.Start();
         }
 
-        /// <summary>
-        /// ‘Ì‰·“ü—Íƒ_ƒCƒAƒƒO‚ğ•\¦‚µAƒf[ƒ^‚ğ’Ç‰Á
-        /// </summary>
         private void btnAddTemperature_Click(object sender, EventArgs e)
         {
             using var inputForm = new TemperatureInputForm();
@@ -165,17 +143,11 @@ namespace gittest2025
             }
         }
 
-        /// <summary>
-        /// ƒOƒ‰ƒt‚ğÅV‚Ì‘Ì‰·ƒf[ƒ^‚ÅÄ•`‰æ
-        /// </summary>
         private void UpdateTemperatureGraph()
         {
             pictureBoxGraph.Invalidate();
         }
 
-        /// <summary>
-        /// PictureBox‚ÌPaintƒCƒxƒ“ƒg‚ÅƒOƒ‰ƒt‚ğ•`‰æ
-        /// </summary>
         private void PictureBoxGraph_Paint(object sender, PaintEventArgs e)
         {
             var graphics = e.Graphics;
@@ -184,37 +156,32 @@ namespace gittest2025
 
             graphics.Clear(Color.White);
 
-            // ²‚Ì•`‰æ
             using (var axisPen = new Pen(Color.Black, 2))
             {
-                graphics.DrawLine(axisPen, 50, height - 40, width - 20, height - 40); // X²
-                graphics.DrawLine(axisPen, 50, 20, 50, height - 40); // Y²
+                graphics.DrawLine(axisPen, 50, height - 40, width - 20, height - 40);
+                graphics.DrawLine(axisPen, 50, 20, 50, height - 40);
             }
 
-            // ƒ^ƒCƒgƒ‹‚Æƒ‰ƒxƒ‹‚Ì•`‰æ
-            graphics.DrawString("‘Ì‰·„ˆÚ", new Font("Meiryo", 14), Brushes.Black, width / 2 - 40, 5);
-            graphics.DrawString("‘Ì‰·()", new Font("Meiryo", 10), Brushes.Black, 5, 20);
-            graphics.DrawString("“ü—ÍŠÔ", new Font("Meiryo", 10), Brushes.Black, width / 2 - 30, height - 25);
+            graphics.DrawString("ä½“æ¸©ã‚°ãƒ©ãƒ•", new Font("Meiryo", 14), Brushes.Black, width / 2 - 40, 5);
+            graphics.DrawString("ä½“æ¸©(â„ƒ)", new Font("Meiryo", 10), Brushes.Black, 5, 20);
+            graphics.DrawString("æ—¥æ™‚", new Font("Meiryo", 10), Brushes.Black, width / 2 - 30, height - 25);
 
-            // Œxƒ‰ƒCƒ“‚Ì•`‰æiƒOƒ‰ƒt—Ìˆæ“àj
             int graphTop = 20;
             int graphBottom = height - 40;
             int graphHeight = graphBottom - graphTop;
 
-            // 37“x‚Ìƒ‰ƒCƒ“iÔj
             float y37 = (float)(graphBottom - ((WarningTempHigh - MinTempScale) / (MaxTempScale - MinTempScale) * graphHeight));
             using (var warningPenHigh = new Pen(Color.Red, 1) { DashStyle = System.Drawing.Drawing2D.DashStyle.Dash })
             {
                 graphics.DrawLine(warningPenHigh, 50, y37, width - 20, y37);
-                graphics.DrawString("37.0", new Font("Meiryo", 8), Brushes.Red, 15, y37 - 7);
+                graphics.DrawString("37.0â„ƒ", new Font("Meiryo", 8), Brushes.Red, 15, y37 - 7);
             }
 
-            // 35“x‚Ìƒ‰ƒCƒ“iÂj
             float y35 = (float)(graphBottom - ((WarningTempLow - MinTempScale) / (MaxTempScale - MinTempScale) * graphHeight));
             using (var warningPenLow = new Pen(Color.Blue, 1) { DashStyle = System.Drawing.Drawing2D.DashStyle.Dash })
             {
                 graphics.DrawLine(warningPenLow, 50, y35, width - 20, y35);
-                graphics.DrawString("35.0", new Font("Meiryo", 8), Brushes.Blue, 15, y35 - 7);
+                graphics.DrawString("35.0â„ƒ", new Font("Meiryo", 8), Brushes.Blue, 15, y35 - 7);
             }
 
             if (temperatureDataManager.Records.Count > 0)
@@ -223,7 +190,7 @@ namespace gittest2025
                 DateTime minTime = records.First().RecordTime;
                 DateTime maxTime = records.Last().RecordTime;
                 double timeSpan = (maxTime - minTime).TotalMinutes;
-                if (timeSpan == 0) timeSpan = 1; // 1“_‚Ì‚İ‚Ìê‡
+                if (timeSpan == 0) timeSpan = 1;
 
                 PointF[] dataPoints = records.Select(r =>
                 {
@@ -232,19 +199,14 @@ namespace gittest2025
                     return new PointF(x, y);
                 }).ToArray();
 
-                // Ü‚êü
                 if (dataPoints.Length > 1)
                     graphics.DrawLines(Pens.Blue, dataPoints);
 
-                // “_
                 foreach (var pt in dataPoints)
                     graphics.FillEllipse(Brushes.Red, pt.X - 4, pt.Y - 4, 8, 8);
             }
         }
 
-        /// <summary>
-        /// ƒOƒ‰ƒtã‚ÅƒNƒŠƒbƒN‚³‚ê‚½“_‚ğ‘I‘ğ‚µAî•ñ‚ğ•\¦‚Ü‚½‚Ííœƒƒjƒ…[‚ğ•\¦
-        /// </summary>
         private void PictureBoxGraph_MouseDown(object sender, MouseEventArgs e)
         {
             if (temperatureDataManager.Records.Count > 0)
@@ -281,10 +243,8 @@ namespace gittest2025
                     selectedIndex = nearest;
                     var record = records[nearest];
                     
-                    // ‘I‘ğ‚³‚ê‚½ƒf[ƒ^‚Ì•\¦‚ğXV
-                    lblSelectedDateTime.Text = $"“ú: {record.RecordTime:yyyy/MM/dd HH:mm}";
+                    lblSelectedDateTime.Text = $"æ—¥æ™‚: {record.RecordTime:yyyy/MM/dd HH:mm}";
 
-                    // ‘Ì‰·’l‚É‚æ‚Á‚Ä•¶šF‚ğ•ÏX
                     if ((double)record.Temperature <= WarningTempLow)
                     {
                         lblSelectedTemperature.ForeColor = Color.Blue;
@@ -298,7 +258,7 @@ namespace gittest2025
                         lblSelectedTemperature.ForeColor = Color.Black;
                     }
 
-                    lblSelectedTemperature.Text = $"‘Ì‰·: {record.Temperature:F1}";
+                    lblSelectedTemperature.Text = $"ä½“æ¸©: {record.Temperature:F1}â„ƒ";
 
                     if (e.Button == MouseButtons.Right)
                     {
@@ -308,9 +268,6 @@ namespace gittest2025
             }
         }
 
-        /// <summary>
-        /// ƒ}ƒEƒXˆÚ“®‚Éƒf[ƒ^“_ã‚È‚çƒc[ƒ‹ƒ`ƒbƒv•\¦
-        /// </summary>
         private void PictureBoxGraph_MouseMove(object sender, MouseEventArgs e)
         {
             if (temperatureDataManager.Records.Count == 0)
@@ -349,7 +306,7 @@ namespace gittest2025
             if (nearestIndex >= 0 && minDist < DataPointHitRadius * DataPointHitRadius)
             {
                 var record = records[nearestIndex];
-                string toolTipText = $"“ü—ÍŠÔ: {record.RecordTime:yyyy/MM/dd HH:mm}\n‘Ì‰·: {record.Temperature:F1} ";
+                string toolTipText = $"æ—¥æ™‚: {record.RecordTime:yyyy/MM/dd HH:mm}\nä½“æ¸©: {record.Temperature:F1} â„ƒ";
                 if (graphToolTip.GetToolTip(pictureBoxGraph) != toolTipText)
                 {
                     graphToolTip.Show(toolTipText, pictureBoxGraph, e.Location.X + 10, e.Location.Y + 10, 2000);
@@ -367,10 +324,9 @@ namespace gittest2025
             {
                 var record = temperatureDataManager.Records[selectedIndex.Value];
 
-                // íœŠm”Fƒ_ƒCƒAƒƒO‚ğ•\¦
                 var result = MessageBox.Show(
-                    $"‘I‘ğ‚µ‚½‘Ì‰·ƒf[ƒ^i{record.RecordTime:yyyy/MM/dd HH:mm}A{record.Temperature:F1}j‚ğíœ‚µ‚Ü‚·‚©H",
-                    "íœ‚ÌŠm”F",
+                    $"é¸æŠã—ãŸä½“æ¸©ãƒ‡ãƒ¼ã‚¿({record.RecordTime:yyyy/MM/dd HH:mm}ã€{record.Temperature:F1}â„ƒ)ã‚’å‰Šé™¤ã—ã¾ã™ã‹ï¼Ÿ",
+                    "å‰Šé™¤ã®ç¢ºèª",
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Question);
 
@@ -385,7 +341,7 @@ namespace gittest2025
 
         private void button1_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Šm”F‚µ‚Ü‚µ‚½B", "î•ñ", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("ç¢ºèªã—ã¾ã—ãŸã€‚", "é€šçŸ¥", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void button2_Click(object sender, EventArgs e)
